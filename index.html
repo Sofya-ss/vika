@@ -55,16 +55,37 @@
     </div>
 
     <script>
-        // Сохранение записи
+        // Функция для установки минимального времени (текущий момент)
+        function setMinDateTime() {
+            const now = new Date();
+            now.setMinutes(now.getMinutes() - now.getTimezoneOffset());
+            document.getElementById('datetime').min = now.toISOString().slice(0, 16);
+        }
+
+        // Устанавливаем минимальную дату при загрузке страницы
+        setMinDateTime();
+
+        // Сохранение записи с дополнительной проверкой
         document.getElementById('booking-form').addEventListener('submit', function(e) {
             e.preventDefault();
+
+            const selectedDatetime = document.getElementById('datetime').value;
+            const now = new Date();
+            now.setMinutes(now.getMinutes() - now.getTimezoneOffset());
+            const minAllowed = now.toISOString().slice(0, 16);
+
+            // Проверка на случай, если пользователь попытался обойти ограничение вручную
+            if (selectedDatetime < minAllowed) {
+                alert('Нельзя записаться на прошедшее время!');
+                return;
+            }
 
             const booking = {
                 name: document.getElementById('name').value,
                 phone: document.getElementById('phone').value,
                 service: document.getElementById('service').value,
                 master: document.getElementById('master').value,
-                datetime: document.getElementById('datetime').value
+                datetime: selectedDatetime
             };
 
             let bookings = JSON.parse(localStorage.getItem('bookings')) || [];
@@ -73,6 +94,7 @@
 
             alert('Вы успешно записались! Спасибо!');
             this.reset();
+            setMinDateTime();
         });
 
         // Проверка записи по телефону
@@ -95,7 +117,8 @@
                         <b>Дата и время:</b> ${dateObj.toLocaleString('ru-RU')}
                     </div>`;
                 });
-                resultDiv.innerHTML = html;}
+                resultDiv.innerHTML = html;
+            }
         }
     </script>
 </body>
