@@ -46,3 +46,58 @@ button {
 button:hover {
     background-color: #c2185b;
 }
+/* Ссылка для перехода между страницами */
+.top-link {
+    position: absolute;
+    top: 20px;
+    right: 30px;
+}
+
+.top-link a {
+    color: #e91e63;
+    text-decoration: none;
+    font-weight: bold;
+    font-size: 14px;
+}
+
+.top-link a:hover {
+    text-decoration: underline;
+}
+
+/* Скрытие блоков */
+.hidden {
+    display: none !important;
+}
+
+/* Второстепенные кнопки */
+.secondary-btn {
+    background-color: #7f8c8d !important;
+    margin-top: 10px !important;
+}
+
+.logout-btn {
+    background-color: #d9534f !important;
+    margin-top: 15px !important;
+}
+
+/* Контейнеры для записей */
+.result-box, .bookings-container {
+    margin-top: 15px;
+    text-align: left;
+}
+
+.booking-item {
+    background-color: #f9f9f9;
+    border-left: 4px solid #e91e63;
+    padding: 10px 12px;
+    margin-bottom: 10px;
+    border-radius: 4px;
+    font-size: 14px;
+    line-height: 1.4;
+}
+
+.divider {
+    margin: 25px 0 15px 0;
+    border: 0;
+    border-top: 1px solid #eee;
+}

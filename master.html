@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Кабинет мастера</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <!-- Ссылка назад на сайт -->
+    <div class="top-link">
+        <a href="index.html">← На главную (Запись)</a>
+    </div>
+
+    <!-- Карточка кабинета мастера -->
+    <div class="card">
+        <h2>Кабинет мастера</h2>
+
+        <!-- Форма входа (пароль: 1234) -->
+        <div id="master-login">
+            <p>Введите пароль для доступа к записям:</p>
+            <label for="master-pass">Пароль:</label>
+            <input type="password" id="master-pass" placeholder="Пароль (1234)">
+            <button onclick="loginMaster()">Войти</button>
+        </div>
+
+        <!-- Список записей (скрыт до ввода пароля) -->
+        <div id="master-dashboard" class="hidden">
+            <h3>Все записи клиентов</h3>
+            <button onclick="loadBookings()" class="secondary-btn">Обновить список</button>
+            <div id="bookings-list" class="bookings-container"></div>
+            <button onclick="logoutMaster()" class="logout-btn">Выйти</button>
+        </div>
+    </div>
+
+    <script>
+        // Авторизация мастера (пароль 1234)
+        function loginMaster() {
+            const pass = document.getElementById('master-pass').value;
+            if (pass === '1234') {
+                document.getElementById('master-login').classList.add('hidden');
+                document.getElementById('master-dashboard').classList.remove('hidden');
+                loadBookings();
+            } else {
+                alert('Неверный пароль! (Подсказка: 1234)');
+            }
+        }
+
+        function logoutMaster() {
+            document.getElementById('master-login').classList.remove('hidden');
+            document.getElementById('master-dashboard').classList.add('hidden');
+            document.getElementById('master-pass').value = '';
+        }
+
+        // Загрузка записей из памяти браузера
+        function loadBookings() {
+            const listDiv = document.getElementById('bookings-list');
+            let bookings = JSON.parse(localStorage.getItem('bookings')) || [];
+
+            if (bookings.length === 0) {
+                listDiv.innerHTML = "<p>Пока нет ни одной записи.</p>";
+            } else {
+                let html = "";
+                bookings.forEach((b, index) => {
+                    const dateObj = new Date(b.datetime);
+                    html += `<div class="booking-item">
+                        <strong>#${index + 1} ${b.name}</strong> (${b.phone})<br>
+                        <b>Услуга:</b> ${b.service}<br>
+                        <b>Мастер:</b> ${b.master}<br>
+                        <b>Время:</b> ${dateObj.toLocaleString('ru-RU')}
+                    </div>`;
+                });
+                listDiv.innerHTML = html;
+            }
+        }
+    </script>
+</body>
+</html>
