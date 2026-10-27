@@ -5,63 +5,163 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Запись на маникюр</title>
     <link rel="stylesheet" href="style.css">
+    <!-- Подключаем иконки (FontAwesome) -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
-        /* Красивые модальные окна в едином стиле */
-        .modal-overlay {
+        /* Стили для нового формата "Ваши записи" */
+        .client-booking-list {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .booking-date-group {
+            background-color: rgba(255, 255, 255, 0.7);
+            border: 1px solid #f8bbd0;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+        }
+
+        .booking-date-header {
+            background-color: #fce4ec;
+            color: #c2185b;
+            padding: 10px 15px;
+            font-weight: bold;
+            font-size: 14px;
+            border-bottom: 1px solid #f8bbd0;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .booking-details-box {
+            padding: 15px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .booking-time-client, .booking-service-client, .booking-master-client {
+            font-size: 13px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .booking-time-client b, .booking-time-client span {
+            font-size: 14px;
+        }
+
+        .master-name-badge-client {
+            display: inline-block;
+            background-color: #e91e63;
+            color: white;
+            padding: 3px 8px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: bold;
+        }
+
+        .cancel-booking-btn {
+            background-color: #f44336;
+            color: white;
+            border: none;
+            padding: 8px 12px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 12px;
+            margin-top: 5px;
+            width: auto;
+            align-self: flex-start;
+        }
+
+        .cancel-booking-btn:hover {
+            background-color: #d32f2f;
+        }
+
+        /* Стили для модальных окон (красивые окна) */
+        .modal-overlay-client {
+            display: none; /* Скрыто по умолчанию */
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(0, 0, 0, 0.5);
-            display: flex;
+            background-color: rgba(0, 0, 0, 0.6);
+            z-index: 1000;
             align-items: center;
             justify-content: center;
-            z-index: 1000;
+            backdrop-filter: blur(3px); /* Легкое размытие */
         }
-        .modal-card {
-            background: #ffffff;
-            padding: 25px;
-            border-radius: 12px;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
-            width: 320px;
-            border-top: 4px solid #e91e63;
-            text-align: left;
+
+        .modal-card-client {
+            background-color: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.2);
+            width: 350px;
+            text-align: center;
+            position: relative;
+            border-top: 5px solid #e91e63;
         }
-        .modal-card h3 {
+
+        .modal-card-client h3 {
             color: #c2185b;
             margin-top: 0;
-            font-size: 18px;
-            text-align: center;
+            margin-bottom: 20px;
         }
-        .modal-card p {
+
+        .modal-card-client p {
+            margin-bottom: 20px;
             font-size: 14px;
-            color: #444;
-            text-align: center;
-            margin: 15px 0;
         }
-        .modal-card select, .modal-card input {
-            margin-top: 10px;
-            margin-bottom: 15px;
+
+        .close-modal-client {
+            position: absolute;
+            top: 10px;
+            right: 15px;
+            font-size: 20px;
+            color: #999;
+            cursor: pointer;
         }
-        .modal-buttons {
-            display: flex;
+
+        /* Стили для списка причин */
+        .reason-list {
+            list-style: none;
+            padding: 0;
+            margin: 0 auto 25px;
+            text-align: left;
+            width: fit-content;
+        }
+
+        .reason-list li {
+            padding: 10px;
+            border-bottom: 1px solid #eee;
+            cursor: pointer;
+            transition: background 0.2s;
+            display: flex;align-items: center;
             gap: 10px;
         }
-        .modal-buttons button {
-            margin-top: 0;
+
+        .reason-list li:hover {
+            background-color: #fce4ec;
         }
-        .cancel-modal-btn {
-            background-color: #7f8c8d !important;
+
+        .reason-list li.selected {
+            background-color: #f8bbd0;
+            color: #c2185b;
+            font-weight: bold;
         }
-        .cancel-modal-btn:hover {
-            background-color: #6c7a7d !important;
-        }
+
+        /* Вспомогательные классы */
+        .hidden { display: none !important; }
     </style>
 </head>
 <body>
 
-    <!-- Ссылка на вход для мастера в правом верхнем углу -->
+    <!-- Ссылка на вход для мастера -->
     <div class="top-link">
         <a href="master.html">Кабинет мастера ➔</a>
     </div>
@@ -100,19 +200,194 @@
             <button type="submit">Подтвердить запись</button>
         </form>
 
-        <!-- Блок проверки записи клиентом -->
+        <!-- Блок проверки записи -->
         <hr class="divider">
         <h3>Проверить мою запись</h3>
-        <input type="tel" id="search-phone" placeholder="Введите ваш номер телефона">
+        <p style="font-size: 12px; color: #888; margin-top: -10px;">Введите телефон в формате 7919...</p>
+        <input type="tel" id="search-phone" placeholder="7919...">
         <button type="button" onclick="checkClientBooking()" class="secondary-btn">Найти запись</button>
-        <div id="client-result" class="result-box"></div>
+        
+        <div id="client-result" class="result-box">
+            <!-- Сюда будут выводиться записи -->
+        </div>
     </div>
 
-    <!-- Контейнер для модальных окон -->
-    <div id="modal-container"></div>
+    <!-- МОДАЛЬНОЕ ОКНО 1: Подтверждение отмены -->
+    <div id="cancel-confirm-modal" class="modal-overlay-client">
+        <div class="modal-card-client">
+            <span class="close-modal-client" onclick="closeCancelConfirmModal()">&times;</span>
+            <h3>Отменить запись?</h3>
+            <p>Вы уверены, что хотите отменить эту запись? Это действие нельзя будет отменить.</p>
+            <div style="display: flex; gap: 10px;">
+                <button onclick="goToReasonModal()" style="flex: 1;">Да, отменить</button>
+                <button onclick="closeCancelConfirmModal()" class="cancel-modal-btn" style="flex: 1; background-color: #9e9e9e !important;">Назад</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- МОДАЛЬНОЕ ОКНО 2: Выбор причины -->
+    <div id="cancel-reason-modal" class="modal-overlay-client">
+        <div class="modal-card-client" style="width: 400px;">
+            <span class="close-modal-client" onclick="closeCancelReasonModal()">&times;</span>
+            <h3>Почему вы отменяете запись?</h3>
+            <p style="margin-bottom: 15px;">Выберите одну из причин ниже. Это поможет нам стать лучше.</p>
+            
+            <ul class="reason-list">
+                <li onclick="selectReason(this, 'Личные обстоятельства')"><i class="fas fa-user-times"></i> Личные обстоятельства</li>
+                <li onclick="selectReason(this, 'Изменились планы')"><i class="fas fa-calendar-times"></i> Изменились планы</li><li onclick="selectReason(this, 'Записался по ошибке')"><i class="fas fa-exclamation-triangle"></i> Записался по ошибке</li>
+                <li onclick="selectReason(this, 'Не подходит мастер/время')"><i class="fas fa-user-slash"></i> Не подходит мастер/время</li>
+                <li onclick="selectReason(this, 'Другое')"><i class="fas fa-comment-dots"></i> Другое</li>
+            </ul>
+
+            <button id="final-cancel-btn" onclick="finalCancelBooking()" class="hidden">Подтвердить отмену</button>
+            <button onclick="backToConfirmModal()" class="cancel-modal-btn" style="background-color: #9e9e9e !important;">Назад</button>
+        </div>
+    </div>
 
     <script>
-        // Установка минимальной даты и времени (текущий момент)
+        // Глобальные переменные для хранения ID отменяемой записи и выбранной причины
+        let bookingIdToCancel = null;
+        let selectedCancelReason = null;
+
+        // --- JavaScript Функции ---
+
+        // Проверка записи клиентом (Группировка по датам + красивый формат)
+        function checkClientBooking() {
+            const phone = document.getElementById('search-phone').value.trim();
+            const resultDiv = document.getElementById('client-result');
+            let bookings = JSON.parse(localStorage.getItem('bookings')) || [];
+
+            // Фильтруем записи по телефону
+            const myBookings = bookings.filter(b => b.phone.includes(phone));
+
+            // Сортируем по дате (ближайшие сверху)
+            myBookings.sort((a, b) => new Date(a.datetime) - new Date(b.datetime));
+
+            resultDiv.innerHTML = ""; // Очищаем блок результатов
+
+            if (myBookings.length === 0) {
+                resultDiv.innerHTML = "<p style='color: #c2185b;'>Записей на этот номер не найдено.</p>";
+                return;
+            }
+
+            resultDiv.innerHTML = "<p><b>Ваши записи:</b></p>";
+
+            // Группировка записей по датам (аналогично master.html)
+            const groupedBookings = {};
+            myBookings.forEach(b => {
+                const datePart = b.datetime.split('T')[0]; // ГГГГ-ММ-ДД
+                if (!groupedBookings[datePart]) {
+                    groupedBookings[datePart] = [];
+                }
+                groupedBookings[datePart].push(b);
+            });
+
+            // Вывод сгруппированных записей
+            for (const [dateStr, items] of Object.entries(groupedBookings)) {
+                // Красивое форматирование даты (например: среда, 28 октября)
+                const options = { weekday: 'long', day: 'numeric', month: 'long' };
+                const formattedDate = new Date(dateStr).toLocaleDateString('ru-RU', options);
+
+                // Создаем контейнер для даты
+                const dateGroupHTML = `
+                    <div class="booking-date-group">
+                        <div class="booking-date-header">
+                            <i class="far fa-calendar-check"></i> ${formattedDate}
+                        </div>
+                        <div class="booking-details-box">
+                            ${items.map(b => {
+                                const timeOnly = b.datetime.split('T')[1];
+                                return `
+                                    <div class="booking-item-client">
+                                        <div class="booking-time-client">
+                                            <i class="far fa-clock"></i> <b>${timeOnly}</b> — <span>Вы (${b.name})</span>
+                                        </div>
+                                        <div class="booking-service-client">
+                                            <i class="fas fa-cut"></i> Услуга: <b>${b.service}</b>
+                                        </div>
+                                        <div class="booking-master-client">
+                                            <i class="fas fa-user-circle"></i> Мастер: <span class="master-name-badge-client">${b.master}</span>
+                                        </div>
+                                        <button class="cancel-booking-btn" onclick="openCancelConfirmModal('${b.id}')"><i class="fas fa-times-circle"></i> Отменить запись</button>
+                                        <hr class="divider" style="margin: 10px 0 0 0;">
+                                    </div>
+                                `;
+                            }).join('')}
+                        </div>
+                    </div>
+                `;
+                resultDiv.insertAdjacentHTML('beforeend', dateGroupHTML);
+            }
+        }
+
+        // --- Управление Модальными Окнами ---
+
+        // 1. Окно подтверждения отмены
+        function openCancelConfirmModal(id) {
+            bookingIdToCancel = id; // Запоминаем ID
+            document.getElementById('cancel-confirm-modal').style.display = 'flex';
+        }
+
+        function closeCancelConfirmModal() {
+            bookingIdToCancel = null;
+            document.getElementById('cancel-confirm-modal').style.display = 'none';
+        }
+
+        // 2. Окно выбора причины
+        function goToReasonModal() {
+            closeCancelConfirmModal(); // Закрываем первое окно
+            document.getElementById('cancel-reason-modal').style.display = 'flex';
+        }
+
+        function closeCancelReasonModal() {
+            document.getElementById('cancel-reason-modal').style.display = 'none';
+            // Сброс выбора причины при закрытии
+            const selectedLi = document.querySelector('.reason-list li.selected');
+            if(selectedLi) selectedLi.classList.remove('selected');
+            selectedCancelReason = null;
+            document.getElementById('final-cancel-btn').classList.add('hidden');
+        }
+
+        // 3. Выбор причины из списка
+        function selectReason(element, reason) {
+            // Снимаем выделение с предыдущей причины
+            const prevSelected = document.querySelector('.reason-list li.selected');
+            if (prevSelected) prevSelected.classList.remove('selected');
+
+            // Выделяем новую причину
+            element.classList.add('selected');
+            selectedCancelReason = reason;
+
+            // Показываем кнопку "Подтвердить отмену"
+            document.getElementById('final-cancel-btn').classList.remove('hidden');
+        }
+
+        // 4. Финальная отмена записи
+        function finalCancelBooking() {
+            if (!bookingIdToCancel || !selectedCancelReason) return;
+
+            // Получаем все записи
+            let bookings = JSON.parse(localStorage.getItem('bookings')) || [];
+
+            // Оставляем только те записи, ID которых НЕ совпадает с отменяемым
+            bookings = bookings.filter(b => b.id !== bookingIdToCancel);
+
+            // Сохраняем обратно в localStorage
+            localStorage.setItem('bookings', JSON.stringify(bookings));
+
+            alert('Запись успешно отменена.'); // Простое уведомление
+            
+            closeCancelReasonModal(); // Закрываем окно причин
+            checkClientBooking(); // Обновляем список записей
+        }
+
+        function backToConfirmModal() {
+            closeCancelReasonModal();
+            openCancelConfirmModal(bookingIdToCancel); // Возвращаемся, сохраняя ID
+        }
+
+
+        // Установка минимальной даты и времени
         function setMinDateTime() {
             const now = new Date();
             now.setMinutes(now.getMinutes() - now.getTimezoneOffset());
@@ -121,157 +396,37 @@
 
         setMinDateTime();
 
-        // Функция для показа красивых всплывающих сообщений
-        function showCustomAlert(title, message) {
-            const modalContainer = document.getElementById('modal-container');
-            modalContainer.innerHTML = `
-                <div class="modal-overlay">
-                    <div class="modal-card">
-                        <h3>${title}</h3>
-                        <p>${message}</p>
-                        <button onclick="closeModal()">ОК</button>
-                    </div>
-                </div>
-            `;
-        }
-
-        function closeModal() {
-            document.getElementById('modal-container').innerHTML = '';
-        }
-
         // Сохранение записи
         document.getElementById('booking-form').addEventListener('submit', function(e) {
             e.preventDefault();
 
-            const selectedDatetime = document.getElementById('datetime').value;
-            const now = new Date();
-            now.setMinutes(now.getMinutes() - now.getTimezoneOffset());
-            const minAllowed = now.toISOString().slice(0, 16);
-
-            // 1. Проверка на прошедшее время
-            if (selectedDatetime < minAllowed) {
-                showCustomAlert('Ошибка времени', 'Нельзя записаться на прошедшее время! Выберите актуальную дату и час.');
-                return;
-            }
-
-            // 2. Проверка формата телефона
+            // Проверка телефона
             const phoneInput = document.getElementById('phone').value.trim();
-            const cleanPhone = phoneInput.replace(/\D/g, '');
-            
-            if (cleanPhone.length < 10 || cleanPhone.length > 11) {
-                showCustomAlert('Неверный номер', 'Пожалуйста, введите корректный номер телефона (от 10 до 11 цифр).');
+            const cleanPhone = phoneInput.replace(/\D/g, ''); // Оставляем только цифры
+
+            // Проверка на 11-12 цифр
+            if (cleanPhone.length < 11 || cleanPhone.length > 12) {
+                alert('Неверный формат телефона! Пожалуйста, используйте формат 7919... (11-12 цифр)');
                 return;
             }
 
             const booking = {
-                id: Date.now(),
+                id: Date.now().toString(), // Уникальный ID на основе времени
                 name: document.getElementById('name').value,
-                phone: phoneInput,
+                phone: cleanPhone,
                 service: document.getElementById('service').value,
                 master: document.getElementById('master').value,
-                datetime: selectedDatetime
+                datetime: document.getElementById('datetime').value
             };
 
             let bookings = JSON.parse(localStorage.getItem('bookings')) || [];
             bookings.push(booking);
             localStorage.setItem('bookings', JSON.stringify(bookings));
 
-            showCustomAlert('Успешно!', 'Вы успешно записались на процедуру! Спасибо!');
+            alert('Вы успешно записались!');
             this.reset();
             setMinDateTime();
         });
-
-        // Поиск записи клиента
-        function checkClientBooking() {
-            const phone = document.getElementById('search-phone').value.trim();
-            const resultDiv = document.getElementById('client-result');
-            let bookings = JSON.parse(localStorage.getItem('bookings')) || [];
-
-            if (!phone) {
-                resultDiv.innerHTML = "<p>Введите номер телефона для поиска.</p>";
-                return;
-            }
-
-            const myBookings = bookings.filter(b => b.phone.includes(phone));
-
-            if (myBookings.length === 0) {
-                resultDiv.innerHTML = "<p>Записей на этот номер не найдено.</p>";
-            } else {
-                let html = "<b>Ваши записи:</b><br>";
-                myBookings.forEach(b => {
-                    const dateObj = new Date(b.datetime);
-                    html += `<div class="booking-item">
-                        <b>Услуга:</b> ${b.service}<br>
-                        <b>Мастер:</b> ${b.master}<br>
-                        <b>Дата и время:</b> ${dateObj.toLocaleString('ru-RU')}<br>
-                        <button onclick="openCancelModal(${b.id})" class="logout-btn" style="padding: 5px; font-size: 13px; margin-top: 8px;">Отменить запись</button>
-                    </div>`;
-                });
-                resultDiv.innerHTML = html;
-            }
-        }
-
-        // Открытие красивого окна для выбора причины отмены
-        function openCancelModal(id) {
-            const modalContainer = document.getElementById('modal-container');
-            
-            modalContainer.innerHTML = `
-                <div class="modal-overlay">
-                    <div class="modal-card">
-                        <h3>Отмена записи</h3>
-                        <label for="cancel-reason-select">Выберите причину отмены:</label>
-                        <select id="cancel-reason-select" onchange="toggleOtherInput()">
-                            <option value="Болезнь">1. Болезнь</option>
-                            <option value="Отъезд">2. Отъезд</option>
-                            <option value="Иное">3. Иное</option>
-                        </select>
-                        
-                        <div id="other-reason-box" class="hidden">
-                            <label for="other-reason-text">Уточните причину:</label>
-                            <input type="text" id="other-reason-text" placeholder="Введите причину...">
-                        </div>
-
-                        <div class="modal-buttons">
-                            <button onclick="confirmCancel(${id})">Подтвердить</button>
-                            <button onclick="closeModal()" class="cancel-modal-btn">Назад</button>
-                        </div>
-                    </div>
-                </div>
-            `;
-        }
-
-        // Показ поля ввода при выборе пункта "Иное"
-        function toggleOtherInput() {
-            const selectVal = document.getElementById('cancel-reason-select').value;
-            const otherBox = document.getElementById('other-reason-box');
-            if (selectVal === 'Иное') {
-                otherBox.classList.remove('hidden');
-            } else {
-                otherBox.classList.add('hidden');
-            }
-        }
-
-        // Подтверждение отмены записи
-        function confirmCancel(id) {
-            let reason = document.getElementById('cancel-reason-select').value;
-            
-            if (reason === 'Иное') {
-                const customText = document.getElementById('other-reason-text').value.trim();
-                if (customText) {
-                    reason = 'Иное: ' + customText;
-                } else {
-                    alert('Пожалуйста, уточните причину в поле ввода.');
-                    return;
-                }
-            }
-
-            let bookings = JSON.parse(localStorage.getItem('bookings')) || [];
-            bookings = bookings.filter(b => b.id !== id);
-            localStorage.setItem('bookings', JSON.stringify(bookings));
-
-            showCustomAlert('Запись отменена', 'Ваша запись была успешно удалена. Причина: ' + reason);
-            setTimeout(() => { checkClientBooking(); }, 100);
-        }
     </script>
 </body>
 </html>
