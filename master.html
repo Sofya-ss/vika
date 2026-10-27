@@ -5,6 +5,52 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Кабинет мастера</title>
     <link rel="stylesheet" href="style.css">
+    <style>
+        .master-card {
+            width: 480px !important;
+            max-width: 90vw;
+        }
+        #master-login h2, #master-dashboard h2 {
+            font-size: 24px;
+            margin-bottom: 15px;
+        }
+        #master-login p {
+            font-size: 16px;
+        }
+        #master-login label {
+            font-size: 15px;
+        }
+        #master-login input {
+            font-size: 16px;
+            padding: 10px;
+        }
+        /* Стили для календаря записей */
+        .date-group {
+            margin-bottom: 20px;
+            background: #fff5f8;
+            border-radius: 8px;
+            padding: 12px;
+            border: 1px solid #f8bbd0;
+        }
+        .date-title {
+            font-size: 16px;
+            font-weight: bold;
+            color: #c2185b;
+            margin-bottom: 8px;
+            border-bottom: 2px solid #e91e63;
+            padding-bottom: 4px;
+        }
+        .master-badge {
+            display: inline-block;
+            background-color: #e91e63;
+            color: white;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: bold;
+            margin-top: 4px;
+        }
+    </style>
 </head>
 <body>
 
@@ -14,11 +60,11 @@
     </div>
 
     <!-- Карточка кабинета мастера -->
-    <div class="card">
-        <h2>Кабинет мастера</h2>
-
+    <div class="card master-card">
+        
         <!-- Форма входа (пароль: 1234) -->
         <div id="master-login">
+            <h2>Кабинет мастера</h2>
             <p>Введите пароль для доступа к записям:</p>
             <label for="master-pass">Пароль:</label>
             <input type="password" id="master-pass" placeholder="Пароль (1234)">
@@ -27,9 +73,11 @@
 
         <!-- Список записей (скрыт до ввода пароля) -->
         <div id="master-dashboard" class="hidden">
-            <h3>Все записи клиентов</h3>
+            <h2>Расписание записей</h2>
             <button onclick="loadBookings()" class="secondary-btn">Обновить список</button>
+            
             <div id="bookings-list" class="bookings-container"></div>
+            
             <button onclick="logoutMaster()" class="logout-btn">Выйти</button>
         </div>
     </div>
@@ -53,26 +101,52 @@
             document.getElementById('master-pass').value = '';
         }
 
-        // Загрузка записей из памяти браузера
+        // Загрузка и группировка записей по датам
         function loadBookings() {
             const listDiv = document.getElementById('bookings-list');
             let bookings = JSON.parse(localStorage.getItem('bookings')) || [];
 
             if (bookings.length === 0) {
-                listDiv.innerHTML = "<p>Пока нет ни одной записи.</p>";
-            } else {
-                let html = "";
-                bookings.forEach((b, index) => {
-                    const dateObj = new Date(b.datetime);
+                listDiv.innerHTML = "<p style='margin-top: 15px;'>Пока нет ни одной записи.</p>";
+                return;
+            }
+
+            // Сортируем записи по дате и времени
+            bookings.sort((a, b) => new Date(a.datetime) - new Date(b.datetime));
+
+            // Группируем по дням
+            const grouped = {};
+            bookings.forEach(b => {
+                const datePart = b.datetime.split('T')[0];
+                if (!grouped[datePart]) {
+                    grouped[datePart] = [];
+                }
+                grouped[datePart].push(b);
+            });
+
+            let html = "";
+            
+            for (const [dateStr, items] of Object.entries(grouped)) {
+                const options = { day: 'numeric', month: 'long', year: 'numeric', weekday: 'long' };
+                const formattedDate = new Date(dateStr).toLocaleDateString('ru-RU', options);
+
+                html += `<div class="date-group">
+                    <div class="date-title">📅 ${formattedDate}</div>`;
+
+                items.forEach(b => {
+                    const timeOnly = b.datetime.split('T')[1];
+                    
                     html += `<div class="booking-item">
-                        <strong>#${index + 1} ${b.name}</strong> (${b.phone})<br>
-                        <b>Услуга:</b> ${b.service}<br>
-                        <b>Мастер:</b> ${b.master}<br>
-                        <b>Время:</b> ${dateObj.toLocaleString('ru-RU')}
+                        ⏰ <b>${timeOnly}</b> — <b>${b.name}</b> (${b.phone})<br>
+                        💅 Услуга: ${b.service}<br>
+                        <span class="master-badge">Мастер: ${b.master}</span>
                     </div>`;
                 });
-                listDiv.innerHTML = html;
+
+                html += `</div>`;
             }
+
+            listDiv.innerHTML = html;
         }
     </script>
 </body>
