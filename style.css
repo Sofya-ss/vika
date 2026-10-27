@@ -6,20 +6,36 @@ body {
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    height: 100vh;
+    min-height: 100vh;
     margin: 0;
 }
 
-h1 {
+h1, h2 {
     color: #c2185b;
+    text-align: center;
 }
 
-form {
+p {
+    text-align: center;
+    font-size: 14px;
+    color: #666;
+}
+
+.card {
     background: #ffffff;
-    padding: 20px;
-    border-radius: 10px;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-    width: 320px;
+    padding: 25px;
+    border-radius: 12px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    width: 350px;
+    margin-top: 20px;
+}
+
+label {
+    display: block;
+    margin-top: 12px;
+    font-size: 13px;
+    font-weight: bold;
+    color: #444;
 }
 
 input, select {
@@ -44,9 +60,10 @@ button {
 }
 
 button:hover {
-    background-color: #c2185b;
+    background-color: #d81b60;
 }
-/* Ссылка для перехода между страницами */
+
+/* Ссылка для перехода между страницами в правом верхнем углу */
 .top-link {
     position: absolute;
     top: 20px;
@@ -64,40 +81,49 @@ button:hover {
     text-decoration: underline;
 }
 
-/* Скрытие блоков */
+/* Класс для скрытия элементов */
 .hidden {
     display: none !important;
 }
 
-/* Второстепенные кнопки */
+/* Второстепенные кнопки (например, «Найти запись» или «Обновить») */
 .secondary-btn {
     background-color: #7f8c8d !important;
-    margin-top: 10px !important;
 }
 
+.secondary-btn:hover {
+    background-color: #6c7a7d !important;
+}
+
+/* Кнопка выхода */
 .logout-btn {
     background-color: #d9534f !important;
-    margin-top: 15px !important;
 }
 
-/* Контейнеры для записей */
+.logout-btn:hover {
+    background-color: #c9302c !important;
+}
+
+/* Контейнеры для вывода записей */
 .result-box, .bookings-container {
     margin-top: 15px;
     text-align: left;
 }
 
+/* Карточка отдельной записи */
 .booking-item {
     background-color: #f9f9f9;
     border-left: 4px solid #e91e63;
-    padding: 10px 12px;
+    padding: 10px;
     margin-bottom: 10px;
     border-radius: 4px;
-    font-size: 14px;
+    font-size: 13px;
     line-height: 1.4;
 }
 
+/* Разделительная линия */
 .divider {
-    margin: 25px 0 15px 0;
+    margin: 20px 0 10px 0;
     border: 0;
     border-top: 1px solid #eee;
 }
