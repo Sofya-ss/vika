@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Запись на маникюр</title>
+</head>
+<body>
+
+    <h1>Онлайн-запись на маникюр</h1>
+    <p>Заполните форму ниже, чтобы записаться на процедуру:</p>
+
+    <form>
+        <!-- Поле для имени -->
+        <label for="name">Ваше имя:</label><br>
+        <input type="text" id="name" placeholder="Введите имя" required><br><br>
+
+        <!-- Поле для телефона -->
+        <label for="phone">Номер телефона:</label><br>
+        <input type="tel" id="phone" placeholder="+7 (999) 000-00-00" required><br><br>
+
+        <!-- Выбор услуги -->
+        <label for="service">Выберите услугу:</label><br>
+        <select id="service">
+            <option value="manicure">Маникюр с покрытием</option>
+            <option value="french">Французский маникюр (Френч)</option>
+            <option value="pedicure">Педикюр</option>
+            <option value="design">Снятие + Дизайн</option>
+        </select><br><br>
+
+        <!-- Выбор мастера -->
+        <label for="master">Выберите мастера:</label><br>
+        <select id="master">
+            <option value="any">Любой свободный мастер</option>
+            <option value="vika">Мастер Виктория</option>
+            <option value="anna">Мастер Анна</option>
+        </select><br><br>
+
+        <!-- Дата и время -->
+        <label for="datetime">Дата и время записи:</label><br>
+        <input type="datetime-local" id="datetime" required><br><br>
+
+        <!-- Кнопка отправки -->
+        <button type="submit">Подтвердить запись</button>
+    </form>
+
+</body>
+</html>
