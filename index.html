@@ -31,6 +31,7 @@
                 <option value="Французский маникюр">Французский маникюр (Френч)</option>
                 <option value="Педикюр">Педикюр</option>
                 <option value="Снятие + Дизайн">Снятие + Дизайн</option>
+                <option value="Маникюр с Спанч Бобом">Маникюр с Спанч Бобом</option>
             </select>
 
             <label for="master">Выберите мастера:</label>
@@ -65,7 +66,7 @@
         // Устанавливаем минимальную дату при загрузке страницы
         setMinDateTime();
 
-        // Сохранение записи с дополнительной проверкой
+        // Сохранение записи с проверкой времени и телефона
         document.getElementById('booking-form').addEventListener('submit', function(e) {
             e.preventDefault();
 
@@ -74,21 +75,28 @@
             now.setMinutes(now.getMinutes() - now.getTimezoneOffset());
             const minAllowed = now.toISOString().slice(0, 16);
 
-            // Проверка на случай, если пользователь попытался обойти ограничение вручную
+            // 1. Проверка на прошедшее время
             if (selectedDatetime < minAllowed) {
                 alert('Нельзя записаться на прошедшее время!');
                 return;
             }
 
+            // 2. Проверка формата телефона
+            const phoneInput = document.getElementById('phone').value.trim();
+            const cleanPhone = phoneInput.replace(/\D/g, '');
+            
+            if (cleanPhone.length < 10 || cleanPhone.length > 11) {
+                alert('Неверный формат телефона! Пожалуйста, введите корректный номер.');
+                return;
+            }
+
             const booking = {
                 name: document.getElementById('name').value,
-                phone: document.getElementById('phone').value,
+                phone: phoneInput,
                 service: document.getElementById('service').value,
                 master: document.getElementById('master').value,
                 datetime: selectedDatetime
-            };
-
-            let bookings = JSON.parse(localStorage.getItem('bookings')) || [];
+            };let bookings = JSON.parse(localStorage.getItem('bookings')) || [];
             bookings.push(booking);
             localStorage.setItem('bookings', JSON.stringify(bookings));
 
@@ -103,7 +111,7 @@
             const resultDiv = document.getElementById('client-result');
             let bookings = JSON.parse(localStorage.getItem('bookings')) || [];
 
-            const myBookings = bookings.filter(b => b.phone === phone);
+            const myBookings = bookings.filter(b => b.phone.includes(phone));
 
             if (myBookings.length === 0) {
                 resultDiv.innerHTML = "<p>Записей на этот номер не найдено.</p>";
