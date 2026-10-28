@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Запись на маникюр</title>
     <link rel="stylesheet" href="style.css">
-    <!-- Иконки для красоты -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
         .client-booking-list { display: flex; flex-direction: column; gap: 15px; margin-top: 20px; }
@@ -18,7 +17,6 @@
         .cancel-booking-btn { background-color: #f44336; color: white; border: none; padding: 8px 14px; border-radius: 6px; cursor: pointer; font-size: 12px; margin-top: 8px; width: auto; align-self: flex-start; display: flex; align-items: center; gap: 6px; transition: background 0.2s; }
         .cancel-booking-btn:hover { background-color: #d32f2f; }
 
-        /* Модальные окна */
         .modal-overlay-client { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0, 0, 0, 0.6); z-index: 1000; align-items: center; justify-content: center; backdrop-filter: blur(3px); }
         .modal-card-client { background-color: white; padding: 25px; border-radius: 15px; box-shadow: 0 5px 20px rgba(0, 0, 0, 0.2); width: 350px; text-align: center; position: relative; border-top: 5px solid #e91e63; }
         .modal-card-client h3 { color: #c2185b; margin-top: 0; margin-bottom: 15px; font-size: 18px; }
@@ -98,7 +96,7 @@
             <h3>Отменить запись?</h3>
             <p style="text-align: center;">Вы действительно хотите отменить выбранную запись?</p>
             <div class="modal-buttons">
-                <button onclick="goToReasonModal()">Да, отменить</button>
+                <button id="confirm-yes-btn" onclick="goToReasonModal()">Да, отменить</button>
                 <button onclick="closeCancelConfirmModal()" class="secondary-modal-btn">Назад</button>
             </div>
         </div>
@@ -112,20 +110,20 @@
             <p>Выберите причину из списка:</p>
             
             <select id="cancel-reason-select">
-                <option value="Болезнь">1. Болезнь</option>
-                <option value="Отъезд">2. Отъезд</option>
-                <option value="Иное">3. Иное</option>
+                <option value="1. Болезнь">1. Болезнь</option>
+                <option value="2. Отъезд">2. Отъезд</option>
+                <option value="3. Иное">3. Иное</option>
             </select>
 
             <div class="modal-buttons">
-                <button onclick="finalCancelBooking()">Подтвердить отмену</button>
+                <button id="final-confirm-btn" onclick="finalCancelBooking()">Подтвердить отмену</button>
                 <button onclick="backToConfirmModal()" class="secondary-modal-btn">Назад</button>
             </div>
         </div>
     </div>
 
     <script>
-        let bookingIdToCancel = null;
+        let currentBookingId = null;
 
         function checkClientBooking() {
             const phoneInput = document.getElementById('search-phone').value.trim();
@@ -139,9 +137,13 @@
                 return;
             }
 
-            const myBookings = bookings.filter(b => b.phone.includes(cleanSearchPhone));
-            myBookings.sort((a, b) => new Date(a.datetime) - new Date(b.datetime));
+            // Строгий поиск: телефон должен точно совпадать (или полностью содержаться без путаницы)
+            const myBookings = bookings.filter(b => {
+                const cleanStoredPhone = String(b.phone).replace(/\D/g, '');
+                return cleanStoredPhone === cleanSearchPhone || cleanStoredPhone.endsWith(cleanSearchPhone);
+            });
 
+            myBookings.sort((a, b) => new Date(a.datetime) - new Date(b.datetime));
             resultDiv.innerHTML = "";
 
             if (myBookings.length === 0) {
@@ -183,42 +185,49 @@
         }
 
         function openCancelConfirmModal(id) {
-            bookingIdToCancel = Number(id);
+            currentBookingId = Number(id);
             document.getElementById('cancel-confirm-modal').style.display = 'flex';
         }
+
         function closeCancelConfirmModal() {
-            bookingIdToCancel = null;
             document.getElementById('cancel-confirm-modal').style.display = 'none';
         }
+
         function goToReasonModal() {
-            closeCancelConfirmModal();
+            if (!currentBookingId) {
+                alert('Ошибка: ID записи не найден.');
+                return;
+            }
+            document.getElementById('cancel-confirm-modal').style.display = 'none';
             document.getElementById('cancel-reason-modal').style.display = 'flex';
         }
+
         function closeCancelReasonModal() {
             document.getElementById('cancel-reason-modal').style.display = 'none';
         }
 
         function finalCancelBooking() {
-            if (!bookingIdToCancel) {
+            if (!currentBookingId) {
                 alert('Ошибка: ID записи не найден.');
                 return;
             }
 
             const reasonSelect = document.getElementById('cancel-reason-select');
-            const reason = reasonSelect ? reasonSelect.value : 'Болезнь';
+            const reason = reasonSelect ? reasonSelect.value : '1. Болезнь';
 
             let bookings = JSON.parse(localStorage.getItem('bookings')) || [];
-            bookings = bookings.filter(b => b.id !== bookingIdToCancel);
+            bookings = bookings.filter(b => Number(b.id) !== Number(currentBookingId));
             localStorage.setItem('bookings', JSON.stringify(bookings));
 
             alert('Запись успешно отменена. Причина: ' + reason);
             closeCancelReasonModal();
+            currentBookingId = null;
             checkClientBooking();
         }
 
         function backToConfirmModal() {
-            closeCancelReasonModal();
-            openCancelConfirmModal(bookingIdToCancel);
+            document.getElementById('cancel-reason-modal').style.display = 'none';
+            document.getElementById('cancel-confirm-modal').style.display = 'flex';
         }
 
         function setMinDateTime() {
