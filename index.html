@@ -56,91 +56,7 @@
             <label for="service">Выберите услугу:</label>
             <select id="service">
                 <option value="Маникюр с покрытием">Маникюр с покрытием</option>
-                <option value="Французский маникюр">аписей на этот номер не найдено.</p>";
-                return;
-            }
-
-            const groupedBookings = {};
-            myBookings.forEach(b => {
-                const datePart = b.datetime.split('T')[0];
-                if (!groupedBookings[datePart]) groupedBookings[datePart] = [];
-                groupedBookings[datePart].push(b);
-            });
-
-            let html = "<p style='margin-bottom: 10px;'><b>Ваши записи:</b></p>";
-
-            for (const [dateStr, items] of Object.entries(groupedBookings)) {
-                const options = { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' };
-                const formattedDate = new Date(dateStr).toLocaleDateString('ru-RU', options);
-
-                html += `<div class="booking-date-group">
-                    <div class="booking-date-header"><i class="far fa-calendar-alt"></i> ${formattedDate}</div>
-                    <div class="booking-details-box">`;
-
-                items.forEach(b => {
-                    const timeOnly = b.datetime.split('T')[1];
-                    html += `<div class="booking-item-client">
-                        <div class="booking-time-client"><i class="far fa-clock"></i> <b>${timeOnly}</b> — <span>${b.name}</span></div>
-                        <div class="booking-service-client"><i class="fas fa-spa"></i> Услуга: <b>${b.service}</b></div>
-                        <div class="booking-master-client"><i class="fas fa-user-tie"></i> Мастер: <span class="master-name-badge-client">${b.master}</span></div>
-                        <button class="cancel-booking-btn" onclick="openCancelConfirmModal(${b.id})"><i class="fas fa-ban"></i> Отменить запись</button>
-                    </div>`;
-                });
-
-                html += `</div></div>`;
-            }
-
-            resultDiv.innerHTML = html;
-        }
-
-        // Логика модальных окон
-        function openCancelConfirmModal(id) {
-            bookingIdToCancel = Number(id);
-            document.getElementById('cancel-confirm-modal').style.display = 'flex';
-        }
-        function closeCancelConfirmModal() {
-            bookingIdToCancel = null;
-            document.getElementById('cancel-confirm-modal').style.display = 'none';
-        }
-        function goToReasonModal() {
-            closeCancelConfirmModal();
-            document.getElementById('cancel-reason-modal').style.display = 'flex';
-        }
-        function closeCancelReasonModal() {
-            document.getElementById('cancel-reason-modal').style.display = 'none';
-            const selectedLi = document.querySelector('.reason-list li.selected');
-            if(selectedLi) selectedLi.classList.remove('selected');
-            selectedCancelReason = null;
-            document.getElementById('final-cancel-btn').style.display = 'none';
-        }
-        function selectReason(element, reason) {
-            const prevSelected = document.querySelector('.reason-list li.selected');
-            if (prevSelected) prevSelected.classList.remove('selected');
-            element.classList.add('selected');
-            selectedCancelReason = reason;
-            // Показываем кнопку подтверждения после выбора причины
-            document.getElementById('final-cancel-btn').style.display = 'block';
-        }
-
-        // Подтверждение и удаление записи
-        function finalCancelBooking() {
-            if (!bookingIdToCancel || !selectedCancelReason) {
-                alert('Пожалуйста, выберите причину отмены.');
-                return;
-            }
-
-            let bookings = JSON.parse(localStorage.getItem('bookings')) || [];
-            bookings = bookings.filter(b => b.id !== bookingIdToCancel);
-            localStorage.setItem('bookings', JSON.stringify(bookings));
-
-            alert('Запись успешно отменена. Причина: ' + selectedCancelReason);
-            closeCancelReasonModal();
-            checkClientBooking();
-        }
-
-        function backToConfirmModal() {
-            closeCancelReasonModal();
-            openCaФранцузский маникюр (Френч)</option>
+                <option value="Французский маникюр">Французский маникюр (Френч)</option>
                 <option value="Педикюр">Педикюр</option>
                 <option value="Снятие + Дизайн">Снятие + Дизайн</option>
                 <option value="Маникюр с Спанч Бобом">Маникюр с Спанч Бобом</option>
@@ -205,7 +121,6 @@
         let bookingIdToCancel = null;
         let selectedCancelReason = null;
 
-        // Поиск и вывод записей клиента
         function checkClientBooking() {
             const phoneInput = document.getElementById('search-phone').value.trim();
             const cleanSearchPhone = phoneInput.replace(/\D/g, '');
@@ -224,7 +139,87 @@
             resultDiv.innerHTML = "";
 
             if (myBookings.length === 0) {
-                resultDiv.innerHTML = "<p style='color: #c2185b;'>ЗncelConfirmModal(bookingIdToCancel);
+                resultDiv.innerHTML = "<p style='color: #c2185b;'>Записей на этот номер не найдено.</p>";return;
+            }
+
+            const groupedBookings = {};
+            myBookings.forEach(b => {
+                const datePart = b.datetime.split('T')[0];
+                if (!groupedBookings[datePart]) groupedBookings[datePart] = [];
+                groupedBookings[datePart].push(b);
+            });
+
+            let html = "<p style='margin-bottom: 10px;'><b>Ваши записи:</b></p>";
+
+            for (const [dateStr, items] of Object.entries(groupedBookings)) {
+                const options = { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' };
+                const formattedDate = new Date(dateStr).toLocaleDateString('ru-RU', options);
+
+                html += `<div class="booking-date-group">
+                    <div class="booking-date-header"><i class="far fa-calendar-alt"></i> ${formattedDate}</div>
+                    <div class="booking-details-box">`;
+
+                items.forEach(b => {
+                    const timeOnly = b.datetime.split('T')[1];
+                    html += `<div class="booking-item-client">
+                        <div class="booking-time-client"><i class="far fa-clock"></i> <b>${timeOnly}</b> — <span>${b.name}</span></div>
+                        <div class="booking-service-client"><i class="fas fa-spa"></i> Услуга: <b>${b.service}</b></div>
+                        <div class="booking-master-client"><i class="fas fa-user-tie"></i> Мастер: <span class="master-name-badge-client">${b.master}</span></div>
+                        <button class="cancel-booking-btn" onclick="openCancelConfirmModal(${b.id})"><i class="fas fa-ban"></i> Отменить запись</button>
+                    </div>`;
+                });
+
+                html += `</div></div>`;
+            }
+
+            resultDiv.innerHTML = html;
+        }
+
+        function openCancelConfirmModal(id) {
+            bookingIdToCancel = Number(id);
+            document.getElementById('cancel-confirm-modal').style.display = 'flex';
+        }
+        function closeCancelConfirmModal() {
+            bookingIdToCancel = null;
+            document.getElementById('cancel-confirm-modal').style.display = 'none';
+        }
+        function goToReasonModal() {
+            closeCancelConfirmModal();
+            document.getElementById('cancel-reason-modal').style.display = 'flex';
+        }
+        function closeCancelReasonModal() {
+            document.getElementById('cancel-reason-modal').style.display = 'none';
+            const selectedLi = document.querySelector('.reason-list li.selected');
+            if(selectedLi) selectedLi.classList.remove('selected');
+            selectedCancelReason = null;
+            document.getElementById('final-cancel-btn').style.display = 'none';
+        }
+        function selectReason(element, reason) {
+            const prevSelected = document.querySelector('.reason-list li.selected');
+            if (prevSelected) prevSelected.classList.remove('selected');
+            element.classList.add('selected');
+            selectedCancelReason = reason;
+            document.getElementById('final-cancel-btn').style.display = 'block';
+        }
+
+        function finalCancelBooking() {
+            if (!bookingIdToCancel || !selectedCancelReason) {
+                alert('Пожалуйста, выберите причину отмены.');
+                return;
+            }
+
+            let bookings = JSON.parse(localStorage.getItem('bookings')) || [];
+            bookings = bookings.filter(b => b.id !== bookingIdToCancel);
+            localStorage.setItem('bookings', JSON.stringify(bookings));
+
+            alert('Запись успешно отменена. Причина: ' + selectedCancelReason);
+            closeCancelReasonModal();
+            checkClientBooking();
+        }
+
+        function backToConfirmModal() {
+            closeCancelReasonModal();
+            openCancelConfirmModal(bookingIdToCancel);
         }
 
         function setMinDateTime() {
@@ -234,7 +229,6 @@
         }
         setMinDateTime();
 
-        // Сохранение записи с защитой от пересечения времени
         document.getElementById('booking-form').addEventListener('submit', function(e) {
             e.preventDefault();
             const phoneInput = document.getElementById('phone').value.trim();
