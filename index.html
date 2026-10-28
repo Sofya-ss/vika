@@ -199,13 +199,13 @@
         }
 
         function finalCancelBooking() {
-            const reasonSelect = document.getElementById('cancel-reason-select');
-            const reason = reasonSelect ? reasonSelect.value : 'Иное';
-
             if (!bookingIdToCancel) {
                 alert('Ошибка: ID записи не найден.');
                 return;
             }
+
+            const reasonSelect = document.getElementById('cancel-reason-select');
+            const reason = reasonSelect ? reasonSelect.value : 'Болезнь';
 
             let bookings = JSON.parse(localStorage.getItem('bookings')) || [];
             bookings = bookings.filter(b => b.id !== bookingIdToCancel);
@@ -245,7 +245,7 @@
 
             const isConflict = bookings.some(b => {
                 const timeMatch = b.datetime === selectedDatetime;
-                const masterMatch = (b.master === selectedMaster) || (b.master=== 'Любой свободный мастер') || (selectedMaster === 'Любой свободный мастер');
+                const masterMatch = (b.master === selectedMaster) || (b.master === 'Любой свободный мастер') || (selectedMaster === 'Любой свободный мастер');
                 return timeMatch && masterMatch;
             });
 
