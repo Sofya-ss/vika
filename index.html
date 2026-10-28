@@ -56,91 +56,7 @@
             <label for="service">Выберите услугу:</label>
             <select id="service">
                 <option value="Маникюр с покрытием">Маникюр с покрытием</option>
-                <option value="Французский маникюр">Французский маникюр (Френч)</option>
-                <option value="Педикюр">Педикюр</option>
-                <option value="Снятие + Дизайн">Снятие + Дизайн</option>
-                <option value="Маникюр с Спанч Бобом">Маникюр с Спанч Бобом</option>
-            </select>
-
-            <label for="master">Выберите мастера:</label>
-            <select id="master">
-                <option value="Любой свободный мастер">Любой свободный мастер</option>
-                <option value="Анна">Анна</option>
-                <option value="Елена">Елена</option>
-            </select>
-
-            <label for="datetime">Дата и время записи:</label>
-            <input type="datetime-local" id="datetime" required>
-
-            <button type="submit">Подтвердить запись</button>
-        </form>
-
-        <hr class="divider">
-        <h3>Проверить мою запись</h3>
-        <p style="font-size: 12px; color: #888; margin-top: -10px;">Введите ваш номер телефона</p>
-        <input type="tel" id="search-phone" placeholder="Введите номер телефона">
-        <button type="button" onclick="checkClientBooking()" class="secondary-btn">Найти запись</button>
-        
-        <div id="client-result" class="result-box"></div>
-    </div>
-
-    <!-- Модальное окно 1: Подтверждение отмены -->
-    <div id="cancel-confirm-modal" class="modal-overlay-client">
-        <div class="modal-card-client">
-            <span class="close-modal-client" onclick="closeCancelConfirmModal()">&times;</span>
-            <h3>Отменить запись?</h3>
-            <p>Вы действительно хотите отменить выбранную запись?</p>
-            <div class="modal-buttons">
-                <button onclick="goToReasonModal()">Да, отменить</button>
-                <button onclick="closeCancelConfirmModal()" class="secondary-modal-btn">Назад</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- Модальное окно 2: Выбор причины -->
-    <div id="cancel-reason-modal" class="modal-overlay-client">
-        <div class="modal-card-client">
-            <span class="close-modal-client" onclick="closeCancelReasonModal()">&times;</span>
-            <h3>Причина отмены</h3>
-            <p style="font-size: 13px; margin-bottom: 10px;">Выберите причину из списка:</p>
-            
-            <ul class="reason-list">
-                <li onclick="selectReason(this, 'Болезнь')"><i class="fas fa-user-times" style="color: #c2185b;"></i> 1. Болезнь</li>
-                <li onclick="selectReason(this, 'Отъезд')"><i class="fas fa-plane-departure" style="color: #c2185b;"></i> 2. Отъезд</li>
-                <li onclick="selectReason(this, 'Иное')"><i class="fas fa-question-circle" style="color: #c2185b;"></i> 3. Иное</li>
-            </ul>
-
-            <div class="modal-buttons">
-                <button id="final-cancel-btn" onclick="finalCancelBooking()" style="display: none;">Подтвердить</button>
-                <button onclick="backToConfirmModal()" class="secondary-modal-btn">Назад</button>
-            </div>
-        </div>
-    </div>
-
-    <script>
-        let bookingIdToCancel = null;
-        let selectedCancelReason = null;
-
-        // Поиск и красивый вывод записей в стиле кабинета мастера
-        function checkClientBooking() {
-            const phoneInput = document.getElementById('search-phone').value.trim();
-            const cleanSearchPhone = phoneInput.replace(/\D/g, '');
-            const resultDiv = document.getElementById('client-result');
-            
-            let bookings = JSON.parse(localStorage.getItem('bookings')) || [];
-
-            if (!cleanSearchPhone) {
-                resultDiv.innerHTML = "<p style='color: #c2185b;'>Введите номер телефона для поиска.</p>";
-                return;
-            }
-
-            const myBookings = bookings.filter(b => b.phone.includes(cleanSearchPhone));
-            myBookings.sort((a, b) => new Date(a.datetime) - new Date(b.datetime));
-
-            resultDiv.innerHTML = "";
-
-            if (myBookings.length === 0) {
-                resultDiv.innerHTML = "<p style='color: #c2185b;'>Записей на этот номер не найдено.</p>";
+                <option value="Французский маникюр">аписей на этот номер не найдено.</p>";
                 return;
             }
 
@@ -202,12 +118,16 @@
             if (prevSelected) prevSelected.classList.remove('selected');
             element.classList.add('selected');
             selectedCancelReason = reason;
+            // Показываем кнопку подтверждения после выбора причины
             document.getElementById('final-cancel-btn').style.display = 'block';
         }
 
         // Подтверждение и удаление записи
         function finalCancelBooking() {
-            if (!bookingIdToCancel || !selectedCancelReason) return;
+            if (!bookingIdToCancel || !selectedCancelReason) {
+                alert('Пожалуйста, выберите причину отмены.');
+                return;
+            }
 
             let bookings = JSON.parse(localStorage.getItem('bookings')) || [];
             bookings = bookings.filter(b => b.id !== bookingIdToCancel);
@@ -220,7 +140,91 @@
 
         function backToConfirmModal() {
             closeCancelReasonModal();
-            openCancelConfirmModal(bookingIdToCancel);
+            openCaФранцузский маникюр (Френч)</option>
+                <option value="Педикюр">Педикюр</option>
+                <option value="Снятие + Дизайн">Снятие + Дизайн</option>
+                <option value="Маникюр с Спанч Бобом">Маникюр с Спанч Бобом</option>
+            </select>
+
+            <label for="master">Выберите мастера:</label>
+            <select id="master">
+                <option value="Любой свободный мастер">Любой свободный мастер</option>
+                <option value="Анна">Анна</option>
+                <option value="Елена">Елена</option>
+            </select>
+
+            <label for="datetime">Дата и время записи:</label>
+            <input type="datetime-local" id="datetime" required>
+
+            <button type="submit">Подтвердить запись</button>
+        </form>
+
+        <hr class="divider">
+        <h3>Проверить мою запись</h3>
+        <p style="font-size: 12px; color: #888; margin-top: -10px;">Введите ваш номер телефона</p>
+        <input type="tel" id="search-phone" placeholder="Введите номер телефона">
+        <button type="button" onclick="checkClientBooking()" class="secondary-btn">Найти запись</button>
+        
+        <div id="client-result" class="result-box"></div>
+    </div>
+
+    <!-- Модальное окно 1: Подтверждение отмены -->
+    <div id="cancel-confirm-modal" class="modal-overlay-client">
+        <div class="modal-card-client">
+            <span class="close-modal-client" onclick="closeCancelConfirmModal()">&times;</span>
+            <h3>Отменить запись?</h3>
+            <p>Вы действительно хотите отменить выбранную запись?</p>
+            <div class="modal-buttons">
+                <button onclick="goToReasonModal()">Да, отменить</button>
+                <button onclick="closeCancelConfirmModal()" class="secondary-modal-btn">Назад</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Модальное окно 2: Выбор причины -->
+    <div id="cancel-reason-modal" class="modal-overlay-client">
+        <div class="modal-card-client">
+            <span class="close-modal-client" onclick="closeCancelReasonModal()">&times;</span>
+            <h3>Причина отмены</h3>
+            <p style="font-size: 13px; margin-bottom: 10px;">Выберите причину из списка:</p>
+            
+            <ul class="reason-list">
+                <li onclick="selectReason(this, 'Болезнь')"><i class="fas fa-user-times" style="color: #c2185b;"></i> 1. Болезнь</li>
+                <li onclick="selectReason(this, 'Отъезд')"><i class="fas fa-plane-departure" style="color: #c2185b;"></i> 2. Отъезд</li>
+                <li onclick="selectReason(this, 'Иное')"><i class="fas fa-question-circle" style="color: #c2185b;"></i> 3. Иное</li>
+            </ul>
+
+            <div class="modal-buttons">
+                <button id="final-cancel-btn" onclick="finalCancelBooking()" style="display: none;">Подтвердить отмену</button>
+                <button onclick="backToConfirmModal()" class="secondary-modal-btn">Назад</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let bookingIdToCancel = null;
+        let selectedCancelReason = null;
+
+        // Поиск и вывод записей клиента
+        function checkClientBooking() {
+            const phoneInput = document.getElementById('search-phone').value.trim();
+            const cleanSearchPhone = phoneInput.replace(/\D/g, '');
+            const resultDiv = document.getElementById('client-result');
+            
+            let bookings = JSON.parse(localStorage.getItem('bookings')) || [];
+
+            if (!cleanSearchPhone) {
+                resultDiv.innerHTML = "<p style='color: #c2185b;'>Введите номер телефона для поиска.</p>";
+                return;
+            }
+
+            const myBookings = bookings.filter(b => b.phone.includes(cleanSearchPhone));
+            myBookings.sort((a, b) => new Date(a.datetime) - new Date(b.datetime));
+
+            resultDiv.innerHTML = "";
+
+            if (myBookings.length === 0) {
+                resultDiv.innerHTML = "<p style='color: #c2185b;'>ЗncelConfirmModal(bookingIdToCancel);
         }
 
         function setMinDateTime() {
