@@ -104,7 +104,7 @@
         </div>
     </div>
 
-    <!-- Модальное окно 2: Выбор причины (надежный селект) -->
+    <!-- Модальное окно 2: Выбор причины -->
     <div id="cancel-reason-modal" class="modal-overlay-client">
         <div class="modal-card-client">
             <span class="close-modal-client" onclick="closeCancelReasonModal()">&times;</span>
@@ -199,9 +199,11 @@
         }
 
         function finalCancelBooking() {
-            const reason = document.getElementById('cancel-reason-select').value;
-            if (!bookingIdToCancel || !reason) {
-                alert('Пожалуйста, выберите причину отмены.');
+            const reasonSelect = document.getElementById('cancel-reason-select');
+            const reason = reasonSelect ? reasonSelect.value : 'Иное';
+
+            if (!bookingIdToCancel) {
+                alert('Ошибка: ID записи не найден.');
                 return;
             }
 
@@ -243,7 +245,7 @@
 
             const isConflict = bookings.some(b => {
                 const timeMatch = b.datetime === selectedDatetime;
-                const masterMatch = (b.master === selectedMaster) || (b.master === 'Любой свободный мастер') || (selectedMaster === 'Любой свободный мастер');
+                const masterMatch = (b.master === selectedMaster) || (b.master=== 'Любой свободный мастер') || (selectedMaster === 'Любой свободный мастер');
                 return timeMatch && masterMatch;
             });
 
